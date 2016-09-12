@@ -1,6 +1,6 @@
 USE [Admin]
 GO
-
+--test on web
 /****** Object:  StoredProcedure [dbo].[sp_ReadLRQ]    Script Date: 9/12/2016 10:46:27 AM ******/
 SET ANSI_NULLS ON
 GO
