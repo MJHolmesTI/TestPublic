@@ -1,25 +1,27 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 
 
-create proc [dbo].[sp_ReadLRQ]
+
+CREATE PROC [dbo].[sp_ReadLRQ]
 
 (
-@db varchar(100) = '',
-@EndTime datetime= null,
-@text varchar(100) ='',
-@MinMs smallint = 1000 ) 
+@db VARCHAR(100) = '',
+@EndTime DATETIME= NULL,
+@text VARCHAR(100) ='',
+@MinMs SMALLINT = 1000 ) 
 
-as
---test remote 1
+AS
+--test remote 2
 
-if @Endtime is null 
-Set @EndTime = getdate() 
+IF @Endtime IS NULL 
+SET @EndTime = GETDATE() 
 
 
-declare @tracefilename nvarchar(256)
+DECLARE @tracefilename NVARCHAR(256)
 --select * from tempdb.dbo.sysfiles where name = 'tempdev'
 
 --declare @tracefilebase nvarchar(50)
@@ -31,25 +33,25 @@ declare @tracefilename nvarchar(256)
 --print @tempdbpath 
 --set @tracefilename = replace(@tempdbpath,'tempdb.mdf',@tracefilebase)
 
-select @tracefilename = path from sys.traces where path like '%LongRunning%'
+SELECT @tracefilename = path FROM sys.traces WHERE path LIKE '%LongRunning%'
 --select @tracefilename = 'L:\SQLData\LongRunningQueries-2015-05-30.trc'
-print @tracefilename 
+PRINT @tracefilename 
 
-select top 250 (duration/1000) as duration_ms, reads as reads__8KB, cpu as cpu_ms, starttime, endtime, databasename, hostname,
-left(convert(nvarchar(max),textdata),500 ) as CommandText, 
- right(convert(nvarchar(max),textdata),5000) as TD1,
- datalength(textdata) as TDL, 
- datalength(replace(convert(nvarchar(max),textdata),'@p1','') ) as TDL2
+SELECT TOP 250 (duration/1000) AS duration_ms, reads AS reads__8KB, cpu AS cpu_ms, starttime, endtime, databasename, hostname,
+LEFT(CONVERT(NVARCHAR(MAX),textdata),500 ) AS CommandText, 
+ RIGHT(CONVERT(NVARCHAR(MAX),textdata),5000) AS TD1,
+ DATALENGTH(textdata) AS TDL, 
+ DATALENGTH(REPLACE(CONVERT(NVARCHAR(MAX),textdata),'@p1','') ) AS TDL2
  ,*
- from fn_trace_gettable(@tracefilename,-1) tr
-where duration > @minMs*1000--and reads+cpu > 0 
-and databasename like  @db+'%' 
+ FROM fn_trace_gettable(@tracefilename,-1) tr
+WHERE duration > @minMs*1000--and reads+cpu > 0 
+AND databasename LIKE  @db+'%' 
 --and textdata not like '%backup%' 
-and textdata like '%'+@text+'%'
-and tr.starttime < @Endtime
+AND textdata LIKE '%'+@text+'%'
+AND tr.starttime < @Endtime
 --and tr.starttime > '2015-05-04 18:20:00' and tr.starttime <'2015-05-04 18:24:00'-- '2014-11-12 07:27:13.097' 
 --and hostname like 'SC01FMWEB19%'
-order by tr.starttime  desc 
+ORDER BY tr.starttime  DESC 
 
 --select min(starttime) from fn_trace_gettable(@tracefilename,0)
 
@@ -59,4 +61,5 @@ order by tr.starttime  desc
 --set @p1=2
 --exec sp_prepexec @p1 output,NULL,N'select g.*, g.program_no as guide_id from program_genre_tbl g join program_tbl p on g.program_no = p.program_no and p.is_active = 1'
 --select @p1
+
 GO
