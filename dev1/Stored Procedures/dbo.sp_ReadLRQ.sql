@@ -2,9 +2,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
-
-
 CREATE PROC [dbo].[sp_ReadLRQ]
 
 (
@@ -14,8 +11,7 @@ CREATE PROC [dbo].[sp_ReadLRQ]
 @MinMs SMALLINT = 1000 ) 
 
 AS
---test remote 2
---test edit dev1
+--test remote 4 with build
 
 IF @Endtime IS NULL 
 SET @EndTime = GETDATE() 
@@ -61,5 +57,4 @@ ORDER BY tr.starttime  DESC
 --set @p1=2
 --exec sp_prepexec @p1 output,NULL,N'select g.*, g.program_no as guide_id from program_genre_tbl g join program_tbl p on g.program_no = p.program_no and p.is_active = 1'
 --select @p1
-
 GO
